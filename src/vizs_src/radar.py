@@ -91,9 +91,8 @@ def _create_radar_chart(
 
     fig.update_layout(
         template=TEMPLATE,
-        title=TITLE,
         height=620,
-        margin={"l": 40, "r": 40, "t": 70, "b": 40},
+        margin={"l": 40, "r": 40, "t": 40, "b": 40},
         polar={"radialaxis": {"visible": True, "range": [0, 1]}},
         legend={"orientation": "h", "y": -0.08, "x": 0},
         font={"family": "Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"},

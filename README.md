@@ -20,9 +20,10 @@ Open the local URL printed by Dash, usually `http://127.0.0.1:8050/`.
 data/
   student_habits_performance.csv
 src/
+  assets/
+    style.css
   app.py
   preprocessing.py
-  all_in_one.py
   vizs_src/
     __init__.py
     radar.py
@@ -33,8 +34,8 @@ HOW_TO_RUN.txt
 
 - `src/preprocessing.py` loads, cleans, detects, and prepares dataset fields.
 - `src/vizs_src/radar.py` contains the current radar visualization.
-- `src/all_in_one.py` is the registry for current and future visualizations.
-- `src/app.py` contains the Dash interface and callbacks.
+- `src/app.py` contains the compact Dash interface and callback.
+- `src/assets/style.css` contains the page styling.
 
 ## Add A Visualization
 
@@ -45,5 +46,5 @@ def create_visual(df, **kwargs):
     return fig, title, explanation
 ```
 
-Import and register that function in `src/all_in_one.py`. The `visual_name`
-argument can then select it through the shared registry.
+Import the function directly in `src/app.py` with a clear alias, then call it
+from the appropriate callback. Comments in `src/app.py` show an example.
