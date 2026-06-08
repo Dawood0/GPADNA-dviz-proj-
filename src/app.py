@@ -4,6 +4,7 @@ from dash import Dash, Input, Output, dcc, html
 
 from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
+from vizs_src.heatmap import create_visual as create_heatmap
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
@@ -17,6 +18,9 @@ DEFAULT_FEATURES = FEATURES[:7]
 FEATURE_OPTIONS = [{"label": pretty_name(feature), "value": feature} for feature in FEATURES]
 DEFAULT_LOW = 50
 DEFAULT_HIGH = 80
+
+HEATMAP_FIGURE_HEALTH, HEATMAP_TITLE, HEATMAP_EXPLANATION = create_heatmap(DF, target_col=TARGET_COL, mode="health")
+HEATMAP_FIGURE_PAIRWISE, _, _ = create_heatmap(DF, target_col=TARGET_COL, mode="pairwise")
 
 app = Dash(__name__)
 app.title = "GPADNA"
@@ -97,6 +101,54 @@ def create_layout() -> html.Main:
                         [
                             html.H2(id="visual-title"),
                             html.P(id="visual-explanation"),
+                        ],
+                        className="explanation",
+                    ),
+                ],
+                className="chart-card",
+            ),
+            html.Section(
+                [
+                    dcc.Tabs(
+                        id="heatmap-tabs",
+                        value="health",
+                        children=[
+                            dcc.Tab(
+                                label="Health Factors",
+                                value="health",
+                                children=[
+                                    html.Div(
+                                        dcc.Graph(
+                                            id="heatmap-health-graph",
+                                            figure=HEATMAP_FIGURE_HEALTH,
+                                            config={"displayModeBar": False, "scrollZoom": False, "responsive": True},
+                                            style={"width": "100%", "height": "900px"},
+                                        ),
+                                        style={"padding": "0.5rem"},
+                                    )
+                                ],
+                            ),
+                            dcc.Tab(
+                                label="Other Study Habits",
+                                value="pairwise",
+                                children=[
+                                    html.Div(
+                                        dcc.Graph(
+                                            id="heatmap-pairwise-graph",
+                                            figure=HEATMAP_FIGURE_PAIRWISE,
+                                            config={"displayModeBar": False, "scrollZoom": False, "responsive": True},
+                                            style={"width": "100%", "height": "900px"},
+                                        ),
+                                        style={"padding": "0.5rem"},
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        [
+                            html.H2(HEATMAP_TITLE),
+                            html.P(HEATMAP_EXPLANATION),
                         ],
                         className="explanation",
                     ),
