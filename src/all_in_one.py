@@ -6,19 +6,19 @@ from collections.abc import Callable
 
 import pandas as pd
 
-from vizs_src.my_visualization import create_visual as create_my_visualization
+from vizs_src.radar import create_visual as create_radar_visualization
 
 
 VisualFactory = Callable[..., tuple[object, str, str]]
 
 VISUALIZATIONS: dict[str, VisualFactory] = {
-    "my_visualization": create_my_visualization,
+    "radar": create_radar_visualization,
 }
 
 
 def create_visual(
     df: pd.DataFrame,
-    visual_name: str = "my_visualization",
+    visual_name: str = "radar",
     **kwargs,
 ) -> tuple[object, str, str]:
     """Create a registered visualization by name."""

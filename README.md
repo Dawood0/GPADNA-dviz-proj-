@@ -25,14 +25,14 @@ src/
   all_in_one.py
   vizs_src/
     __init__.py
-    my_visualization.py
+    radar.py
 requirements.txt
 README.md
 HOW_TO_RUN.txt
 ```
 
 - `src/preprocessing.py` loads, cleans, detects, and prepares dataset fields.
-- `src/vizs_src/my_visualization.py` contains the current radar visualization.
+- `src/vizs_src/radar.py` contains the current radar visualization.
 - `src/all_in_one.py` is the registry for current and future visualizations.
 - `src/app.py` contains the Dash interface and callbacks.
 
