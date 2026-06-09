@@ -5,6 +5,7 @@ from dash import Dash, Input, Output, dcc, html
 from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
 from vizs_src.heatmap import create_visual as create_heatmap
+from vizs_src.bar_chart import make_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
@@ -21,6 +22,7 @@ DEFAULT_HIGH = 80
 
 HEATMAP_FIGURE_HEALTH, HEATMAP_TITLE, HEATMAP_EXPLANATION = create_heatmap(DF, target_col=TARGET_COL, mode="health")
 HEATMAP_FIGURE_PAIRWISE, _, _ = create_heatmap(DF, target_col=TARGET_COL, mode="pairwise")
+BAR_CHART_FIGURE = make_bar_chart(DF)
 
 app = Dash(__name__)
 app.title = "GPADNA"
@@ -101,6 +103,23 @@ def create_layout() -> html.Main:
                         [
                             html.H2(id="visual-title"),
                             html.P(id="visual-explanation"),
+                        ],
+                        className="explanation",
+                    ),
+                ],
+                className="chart-card",
+            ),
+            html.Section(
+                [
+                    dcc.Graph(
+                        id="bar-chart",
+                        figure=BAR_CHART_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
+                    html.Div(
+                        [
+                            html.H2(CHART_TITLE),
+                            html.P(CHART_EXPLANATION),
                         ],
                         className="explanation",
                     ),
