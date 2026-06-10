@@ -105,15 +105,15 @@ def create_layout() -> html.Main:
             ),
             html.Section(
                 [
-                    html.P(id="status", className="status"),
                     dcc.Graph(
-                        id="radar-chart",
+                        id="bar-chart",
+                        figure=BAR_CHART_FIGURE,
                         config={"displayModeBar": False, "responsive": True},
                     ),
                     html.Div(
                         [
-                            html.H2(id="visual-title"),
-                            html.P(id="visual-explanation"),
+                            html.H2(CHART_TITLE),
+                            html.P(CHART_EXPLANATION),
                         ],
                         className="explanation",
                     ),
@@ -139,15 +139,15 @@ def create_layout() -> html.Main:
             ),
             html.Section(
                 [
+                    html.P(id="status", className="status"),
                     dcc.Graph(
-                        id="bar-chart",
-                        figure=BAR_CHART_FIGURE,
+                        id="radar-chart",
                         config={"displayModeBar": False, "responsive": True},
                     ),
                     html.Div(
                         [
-                            html.H2(CHART_TITLE),
-                            html.P(CHART_EXPLANATION),
+                            html.H2(id="visual-title"),
+                            html.P(id="visual-explanation"),
                         ],
                         className="explanation",
                     ),
