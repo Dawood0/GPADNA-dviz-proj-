@@ -20,7 +20,7 @@ from preprocessing import (
 TITLE = "Student Habit Distribution by Grade Category"
 EXPLANATION = (
     "Shows how individual student habit values spread across the selected factors. "
-    "Colors use the same high, average, and low grade groups as the radar chart."
+    "Colors use the same high (green), average (orange), and low grade (red) groups."
 )
 TEMPLATE = "plotly_white"
 COLORS = {
