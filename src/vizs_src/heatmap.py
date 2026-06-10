@@ -55,7 +55,7 @@ BINS_MAP = {
     "attendance_percentage": (ATTENDANCE_BINS, ATTENDANCE_LABELS),
 }
 
-TITLE = "Comparison on the impacts of different factors on students' median scores"
+TITLE = "Comparison of the impacts of different factors on students' median scores"
 EXPLANATION = (
     "Displays heatmaps comparing the median exam scores across different combinations of habits."
     "Use this chart to understand which factor has a significant impact on student performance when compared to any other factor."
