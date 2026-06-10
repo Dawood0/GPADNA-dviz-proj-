@@ -17,7 +17,6 @@ DETECTED = detect_columns(DF)
 TARGET_COL = DETECTED["target_col"]
 FEATURES = DETECTED["features"]
 DEFAULT_FEATURES = FEATURES[:7]
-FEATURE_OPTIONS = [{"label": pretty_name(feature), "value": feature} for feature in FEATURES]
 DEFAULT_LOW = 50
 DEFAULT_HIGH = 80
 
@@ -41,6 +40,15 @@ app.title = "GPADNA"
 
 def make_control(label: str, component) -> html.Div:
     return html.Div([html.Label(label), component], className="control")
+
+
+def make_feature_chip(feature: str, selected: bool = False) -> html.Div:
+    return html.Div(
+        pretty_name(feature),
+        className="feature-chip selected" if selected else "feature-chip",
+        draggable="true",
+        **{"data-feature": feature},
+    )
 
 
 def create_layout() -> html.Main:
@@ -70,11 +78,44 @@ def create_layout() -> html.Main:
                         [
                             make_control(
                                 "Features",
-                                dcc.Dropdown(
-                                    id="features",
-                                    options=FEATURE_OPTIONS,
-                                    value=DEFAULT_FEATURES,
-                                    multi=True,
+                                html.Div(
+                                    [
+                                        dcc.Store(
+                                            id="features",
+                                            data=DEFAULT_FEATURES,
+                                        ),
+                                        html.Div(
+                                            [
+                                                html.Span("Available", className="feature-zone-label"),
+                                                html.Div(
+                                                    [
+                                                        make_feature_chip(feature)
+                                                        for feature in FEATURES
+                                                        if feature not in DEFAULT_FEATURES
+                                                    ],
+                                                    id="available-features",
+                                                    className="feature-drop-zone",
+                                                    **{"data-zone": "available"},
+                                                ),
+                                            ],
+                                            className="feature-zone",
+                                        ),
+                                        html.Div("→", className="feature-drag-arrow"),
+                                        html.Div(
+                                            [
+                                                html.Span("Selected", className="feature-zone-label"),
+                                                html.Div(
+                                                    [make_feature_chip(feature, selected=True) for feature in DEFAULT_FEATURES],
+                                                    id="selected-features",
+                                                    className="feature-drop-zone selected-zone",
+                                                    **{"data-zone": "selected"},
+                                                ),
+                                            ],
+                                            className="feature-zone",
+                                        ),
+                                    ],
+                                    id="feature-drag-board",
+                                    className="feature-drag-board",
                                 ),
                             ),
                             make_control(
@@ -218,7 +259,7 @@ app.layout = create_layout()
     Output("beeswarm-title", "children"),
     Output("beeswarm-explanation", "children"),
     Output("status", "children"),
-    Input("features", "value"),
+    Input("features", "data"),
     Input("low-threshold", "value"),
     Input("high-threshold", "value"),
     Input("display-mode", "value"),

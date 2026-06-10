@@ -107,81 +107,80 @@ h1 {
     margin-right: 5px;
 }
 
-#features .Select-control {
-    height: 48px;
-    border: 1px solid var(--border);
+.feature-drag-board {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.feature-zone {
+    min-width: 0;
+    flex: 1;
+}
+
+.feature-zone-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.feature-drop-zone {
+    display: flex;
+    min-height: 52px;
+    padding: 7px;
+    gap: 7px;
+    overflow-x: auto;
+    border: 1px dashed #aebdcc;
     border-radius: 10px;
     background: #f8fafc;
-    box-shadow: none;
-    cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-#features.is-focused .Select-control,
-#features .Select-control:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
-}
-
-#features .Select-multi-value-wrapper {
-    display: flex;
-    height: 46px;
-    padding: 5px 42px 5px 7px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
     scrollbar-width: thin;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-#features.Select--multi .Select-value {
+.feature-drop-zone.drag-over {
+    border-color: var(--accent);
+    background: #f0fdfa;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.feature-chip {
     flex: 0 0 auto;
-    margin: 3px;
-    border: 0;
+    align-self: center;
+    padding: 7px 11px;
+    border: 1px solid var(--border);
     border-radius: 999px;
+    background: white;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+}
+
+.feature-chip.selected {
+    border-color: #9bd6ce;
     background: #d8f3ef;
     color: #0f5f59;
 }
 
-#features.Select--multi .Select-value-label {
-    padding: 5px 8px;
-    color: #0f5f59;
-    font-size: 13px;
-    font-weight: 700;
+.feature-chip:active {
+    cursor: grabbing;
 }
 
-#features.Select--multi .Select-value-icon {
-    padding: 5px 7px;
-    border-right: 1px solid rgba(15, 118, 110, 0.2);
+.feature-chip.dragging {
+    opacity: 0.45;
+}
+
+.feature-drag-arrow {
+    align-self: center;
+    padding-top: 16px;
     color: var(--accent);
-}
-
-#features.Select--multi .Select-value-icon:hover {
-    background: #bce7e1;
-    color: #b42318;
-}
-
-#features .Select-placeholder,
-#features .Select-input {
-    color: var(--muted);
-    line-height: 44px;
-}
-
-#features .Select-menu-outer {
-    margin-top: 6px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: 0 14px 30px rgba(23, 32, 51, 0.16);
-}
-
-#features .VirtualizedSelectOption {
-    padding: 12px 14px;
-    color: var(--ink);
-    cursor: pointer;
-}
-
-#features .VirtualizedSelectFocusedOption {
-    background: #e8f7f5;
+    font-size: 22px;
+    font-weight: 800;
 }
 
 #display-mode label {
@@ -237,5 +236,13 @@ h1 {
 
     .control-grid {
         grid-template-columns: 1fr;
+    }
+
+    .feature-drag-board {
+        flex-direction: column;
+    }
+
+    .feature-drag-arrow {
+        display: none;
     }
 }
