@@ -131,8 +131,8 @@ def create_layout() -> html.Main:
                                 dcc.RadioItems(
                                     id="display-mode",
                                     options=[
-                                        {"label": "All", "value": "all"},
-                                        {"label": "High and low", "value": "high_low"},
+                                        {"label": "High Mid Low", "value": "all"},
+                                        {"label": "High Low", "value": "high_low"},
                                     ],
                                     value="all",
                                     inline=True,
