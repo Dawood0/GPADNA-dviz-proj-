@@ -77,8 +77,12 @@ h1 {
 
 .control-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
+}
+
+.control-grid > .control:first-child {
+    grid-column: 1 / -1;
 }
 
 .control label {
@@ -101,6 +105,80 @@ h1 {
     width: auto;
     min-height: auto;
     margin-right: 5px;
+}
+
+#features .Select-control {
+    min-height: 54px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #f8fafc;
+    box-shadow: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#features.is-focused .Select-control,
+#features .Select-control:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+}
+
+#features .Select-multi-value-wrapper {
+    display: block;
+    min-height: 52px;
+    max-height: 120px;
+    padding: 6px 42px 6px 7px;
+    overflow-y: auto;
+}
+
+#features.Select--multi .Select-value {
+    margin: 3px;
+    border: 0;
+    border-radius: 999px;
+    background: #d8f3ef;
+    color: #0f5f59;
+}
+
+#features.Select--multi .Select-value-label {
+    padding: 5px 8px;
+    color: #0f5f59;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#features.Select--multi .Select-value-icon {
+    padding: 5px 7px;
+    border-right: 1px solid rgba(15, 118, 110, 0.2);
+    color: var(--accent);
+}
+
+#features.Select--multi .Select-value-icon:hover {
+    background: #bce7e1;
+    color: #b42318;
+}
+
+#features .Select-placeholder,
+#features .Select-input {
+    color: var(--muted);
+    line-height: 52px;
+}
+
+#features .Select-menu-outer {
+    margin-top: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 14px 30px rgba(23, 32, 51, 0.16);
+}
+
+#features .VirtualizedSelectOption {
+    padding: 12px 14px;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+#features .VirtualizedSelectFocusedOption {
+    background: #e8f7f5;
 }
 
 #display-mode label {

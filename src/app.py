@@ -105,11 +105,6 @@ def create_layout() -> html.Main:
             ),
             html.Section(
                 [
-                    dcc.Graph(
-                        id="bar-chart",
-                        figure=BAR_CHART_FIGURE,
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(CHART_TITLE),
@@ -117,16 +112,16 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    dcc.Graph(
+                        id="bar-chart",
+                        figure=BAR_CHART_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
-                    dcc.Graph(
-                        id="beeswarm-chart",
-                        figure=BEESWARM_FIGURE,
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(id="beeswarm-title"),
@@ -134,16 +129,16 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    dcc.Graph(
+                        id="beeswarm-chart",
+                        figure=BEESWARM_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
-                    html.P(id="status", className="status"),
-                    dcc.Graph(
-                        id="radar-chart",
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(id="visual-title"),
@@ -151,11 +146,23 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    html.P(id="status", className="status"),
+                    dcc.Graph(
+                        id="radar-chart",
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
+                    html.Div(
+                        [
+                            html.H2(HEATMAP_TITLE),
+                            html.P(HEATMAP_EXPLANATION),
+                        ],
+                        className="explanation",
+                    ),
                     dcc.Tabs(
                         id="heatmap-tabs",
                         value="health",
@@ -191,13 +198,6 @@ def create_layout() -> html.Main:
                                 ],
                             ),
                         ],
-                    ),
-                    html.Div(
-                        [
-                            html.H2(HEATMAP_TITLE),
-                            html.P(HEATMAP_EXPLANATION),
-                        ],
-                        className="explanation",
                     ),
                 ],
                 className="chart-card",
