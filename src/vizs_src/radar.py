@@ -57,12 +57,15 @@ def _create_radar_chart(
     fig = go.Figure()
     labels = _threshold_labels(high_threshold, low_threshold, display_mode)
     features = radar_data["feature_label"].drop_duplicates().tolist()
+    radial_max = radar_data["normalized_average"].max()
+    radial_max = radial_max if pd.notna(radial_max) and radial_max > 0 else 1
+
     for category in labels:
         group = radar_data.loc[radar_data["grade_category"].eq(category)]
         if group.empty:
             continue
         group = group.set_index("feature_label").reindex(features).reset_index()
-        values = group["normalized_average"].fillna(0).tolist()
+        values = group["normalized_average"].fillna(0).div(radial_max).tolist()
         custom = list(
             zip(
                 group["actual_label"].fillna("Unavailable"),
