@@ -6,6 +6,7 @@ from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
 from vizs_src.heatmap import create_visual as create_heatmap
 from vizs_src.bar_chart import make_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
+from vizs_src.beeswarm import create_visual as create_beeswarm
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
@@ -23,6 +24,16 @@ DEFAULT_HIGH = 80
 HEATMAP_FIGURE_HEALTH, HEATMAP_TITLE, HEATMAP_EXPLANATION = create_heatmap(DF, target_col=TARGET_COL, mode="health")
 HEATMAP_FIGURE_PAIRWISE, _, _ = create_heatmap(DF, target_col=TARGET_COL, mode="pairwise")
 BAR_CHART_FIGURE = make_bar_chart(DF)
+
+
+BEESWARM_FIGURE, BEESWARM_TITLE, BEESWARM_EXPLANATION = create_beeswarm(
+    DF,
+    features=DEFAULT_FEATURES,
+    target_col=TARGET_COL,
+    high_threshold=DEFAULT_HIGH,
+    low_threshold=DEFAULT_LOW,
+    display_mode="all",
+)
 
 app = Dash(__name__)
 app.title = "GPADNA"
@@ -112,6 +123,23 @@ def create_layout() -> html.Main:
             html.Section(
                 [
                     dcc.Graph(
+                        id="beeswarm-chart",
+                        figure=BEESWARM_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
+                    html.Div(
+                        [
+                            html.H2(id="beeswarm-title"),
+                            html.P(id="beeswarm-explanation"),
+                        ],
+                        className="explanation",
+                    ),
+                ],
+                className="chart-card",
+            ),
+            html.Section(
+                [
+                    dcc.Graph(
                         id="bar-chart",
                         figure=BAR_CHART_FIGURE,
                         config={"displayModeBar": False, "responsive": True},
@@ -186,6 +214,9 @@ app.layout = create_layout()
     Output("radar-chart", "figure"),
     Output("visual-title", "children"),
     Output("visual-explanation", "children"),
+    Output("beeswarm-chart", "figure"),
+    Output("beeswarm-title", "children"),
+    Output("beeswarm-explanation", "children"),
     Output("status", "children"),
     Input("features", "value"),
     Input("low-threshold", "value"),
@@ -210,8 +241,18 @@ def update_radar(features, low_threshold, high_threshold, display_mode):
         low_threshold=low_threshold,
         display_mode=display_mode,
     )
+    
+    beeswarm_figure, beeswarm_title, beeswarm_explanation = create_beeswarm(
+        DF,
+        features=features,
+        target_col=TARGET_COL,
+        high_threshold=high_threshold,
+        low_threshold=low_threshold,
+        display_mode=display_mode,
+    )
+
     # Call another imported visual in its own callback using the same pattern.
-    return figure, title, explanation, status
+    return figure, title, explanation, beeswarm_figure, beeswarm_title,beeswarm_explanation, status, 
 
 
 if __name__ == "__main__":
