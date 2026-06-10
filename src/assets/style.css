@@ -108,7 +108,7 @@ h1 {
 }
 
 #features .Select-control {
-    min-height: 54px;
+    height: 48px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: #f8fafc;
@@ -124,14 +124,17 @@ h1 {
 }
 
 #features .Select-multi-value-wrapper {
-    display: block;
-    min-height: 52px;
-    max-height: 120px;
-    padding: 6px 42px 6px 7px;
-    overflow-y: auto;
+    display: flex;
+    height: 46px;
+    padding: 5px 42px 5px 7px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
 }
 
 #features.Select--multi .Select-value {
+    flex: 0 0 auto;
     margin: 3px;
     border: 0;
     border-radius: 999px;
@@ -160,7 +163,7 @@ h1 {
 #features .Select-placeholder,
 #features .Select-input {
     color: var(--muted);
-    line-height: 52px;
+    line-height: 44px;
 }
 
 #features .Select-menu-outer {
