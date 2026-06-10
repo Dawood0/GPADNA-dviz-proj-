@@ -17,6 +17,7 @@ DETECTED = detect_columns(DF)
 TARGET_COL = DETECTED["target_col"]
 FEATURES = DETECTED["features"]
 DEFAULT_FEATURES = FEATURES[:7]
+FEATURE_OPTIONS = [{"label": pretty_name(feature), "value": feature} for feature in FEATURES]
 DEFAULT_LOW = 50
 DEFAULT_HIGH = 80
 
@@ -42,24 +43,32 @@ def make_control(label: str, component) -> html.Div:
     return html.Div([html.Label(label), component], className="control")
 
 
-def make_feature_chip(feature: str, selected: bool = False) -> html.Div:
-    return html.Div(
-        pretty_name(feature),
-        className="feature-chip selected" if selected else "feature-chip",
-        draggable="true",
-        **{"data-feature": feature},
-    )
-
-
 def create_layout() -> html.Main:
     return html.Main(
         [
             html.Header(
                 [
                     html.P("DNA OF STUDENT PERFORMANCE", className="eyebrow"),
-                    html.H1("GPADNA 🧬📊"),
+                    html.H1("GPA DNA 🧬📊"),
                     html.P(
-                        f"Explore how habits differ across grade groups for {len(DF):,} students.",
+                        ["""
+                        Ever wondered what the "genetic code" of academic success might look like?
+                        GPA DNA invites you to explore how everyday habits vary across different groups of students.
+                        """,
+                        html.Br(),
+                        html.Br(),
+                        f"""
+                        Using data from {len(DF):,} students, this interactive experience helps you uncover patterns,
+                        challenge assumptions, and discover which habits are commonly associated with different levels
+                        of academic performance. Adjust the grade thresholds, select the factors that interest you most,
+                        and investigate the relationships that matter to you.
+                        """,
+                        html.Br(),
+                        html.Br(),
+                        """
+                        From study routines and sleep schedules to social media use and extracurricular activities,
+                        start exploring and see what combinations of habits shape the diverse "DNA" of student performance!
+                        """],
                         className="subtitle",
                     ),
                 ],
@@ -78,44 +87,11 @@ def create_layout() -> html.Main:
                         [
                             make_control(
                                 "Features",
-                                html.Div(
-                                    [
-                                        dcc.Store(
-                                            id="features",
-                                            data=DEFAULT_FEATURES,
-                                        ),
-                                        html.Div(
-                                            [
-                                                html.Span("Available", className="feature-zone-label"),
-                                                html.Div(
-                                                    [
-                                                        make_feature_chip(feature)
-                                                        for feature in FEATURES
-                                                        if feature not in DEFAULT_FEATURES
-                                                    ],
-                                                    id="available-features",
-                                                    className="feature-drop-zone",
-                                                    **{"data-zone": "available"},
-                                                ),
-                                            ],
-                                            className="feature-zone",
-                                        ),
-                                        html.Div("→", className="feature-drag-arrow"),
-                                        html.Div(
-                                            [
-                                                html.Span("Selected", className="feature-zone-label"),
-                                                html.Div(
-                                                    [make_feature_chip(feature, selected=True) for feature in DEFAULT_FEATURES],
-                                                    id="selected-features",
-                                                    className="feature-drop-zone selected-zone",
-                                                    **{"data-zone": "selected"},
-                                                ),
-                                            ],
-                                            className="feature-zone",
-                                        ),
-                                    ],
-                                    id="feature-drag-board",
-                                    className="feature-drag-board",
+                                dcc.Dropdown(
+                                    id="features",
+                                    options=FEATURE_OPTIONS,
+                                    value=DEFAULT_FEATURES,
+                                    multi=True,
                                 ),
                             ),
                             make_control(
@@ -131,8 +107,8 @@ def create_layout() -> html.Main:
                                 dcc.RadioItems(
                                     id="display-mode",
                                     options=[
-                                        {"label": "High Mid Low", "value": "all"},
-                                        {"label": "High Low", "value": "high_low"},
+                                        {"label": "All", "value": "all"},
+                                        {"label": "High and low", "value": "high_low"},
                                     ],
                                     value="all",
                                     inline=True,
@@ -259,7 +235,7 @@ app.layout = create_layout()
     Output("beeswarm-title", "children"),
     Output("beeswarm-explanation", "children"),
     Output("status", "children"),
-    Input("features", "data"),
+    Input("features", "value"),
     Input("low-threshold", "value"),
     Input("high-threshold", "value"),
     Input("display-mode", "value"),
