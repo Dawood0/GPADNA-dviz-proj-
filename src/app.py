@@ -49,9 +49,26 @@ def create_layout() -> html.Main:
             html.Header(
                 [
                     html.P("DNA OF STUDENT PERFORMANCE", className="eyebrow"),
-                    html.H1("GPADNA 🧬📊"),
+                    html.H1("GPA DNA 🧬📊"),
                     html.P(
-                        f"Explore how habits differ across grade groups for {len(DF):,} students.",
+                        ["""
+                        Ever wondered what the "genetic code" of academic success might look like?
+                        GPA DNA invites you to explore how everyday habits vary across different groups of students.
+                        """,
+                        html.Br(),
+                        html.Br(),
+                        f"""
+                        Using data from {len(DF):,} students, this interactive experience helps you uncover patterns,
+                        challenge assumptions, and discover which habits are commonly associated with different levels
+                        of academic performance. Adjust the grade thresholds, select the factors that interest you most,
+                        and investigate the relationships that matter to you.
+                        """,
+                        html.Br(),
+                        html.Br(),
+                        """
+                        From study routines and sleep schedules to social media use and extracurricular activities,
+                        start exploring and see what combinations of habits shape the diverse "DNA" of student performance!
+                        """],
                         className="subtitle",
                     ),
                 ],
@@ -105,11 +122,6 @@ def create_layout() -> html.Main:
             ),
             html.Section(
                 [
-                    dcc.Graph(
-                        id="bar-chart",
-                        figure=BAR_CHART_FIGURE,
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(CHART_TITLE),
@@ -117,16 +129,16 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    dcc.Graph(
+                        id="bar-chart",
+                        figure=BAR_CHART_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
-                    dcc.Graph(
-                        id="beeswarm-chart",
-                        figure=BEESWARM_FIGURE,
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(id="beeswarm-title"),
@@ -134,16 +146,16 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    dcc.Graph(
+                        id="beeswarm-chart",
+                        figure=BEESWARM_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
-                    html.P(id="status", className="status"),
-                    dcc.Graph(
-                        id="radar-chart",
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
                     html.Div(
                         [
                             html.H2(id="visual-title"),
@@ -151,11 +163,23 @@ def create_layout() -> html.Main:
                         ],
                         className="explanation",
                     ),
+                    html.P(id="status", className="status"),
+                    dcc.Graph(
+                        id="radar-chart",
+                        config={"displayModeBar": False, "responsive": True},
+                    ),
                 ],
                 className="chart-card",
             ),
             html.Section(
                 [
+                    html.Div(
+                        [
+                            html.H2(HEATMAP_TITLE),
+                            html.P(HEATMAP_EXPLANATION),
+                        ],
+                        className="explanation",
+                    ),
                     dcc.Tabs(
                         id="heatmap-tabs",
                         value="health",
@@ -191,13 +215,6 @@ def create_layout() -> html.Main:
                                 ],
                             ),
                         ],
-                    ),
-                    html.Div(
-                        [
-                            html.H2(HEATMAP_TITLE),
-                            html.P(HEATMAP_EXPLANATION),
-                        ],
-                        className="explanation",
                     ),
                 ],
                 className="chart-card",

@@ -77,8 +77,12 @@ h1 {
 
 .control-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
+}
+
+.control-grid > .control:first-child {
+    grid-column: 1 / -1;
 }
 
 .control label {
@@ -101,6 +105,82 @@ h1 {
     width: auto;
     min-height: auto;
     margin-right: 5px;
+}
+
+.feature-drag-board {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.feature-zone {
+    min-width: 0;
+    flex: 1;
+}
+
+.feature-zone-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.feature-drop-zone {
+    display: flex;
+    min-height: 52px;
+    padding: 7px;
+    gap: 7px;
+    overflow-x: auto;
+    border: 1px dashed #aebdcc;
+    border-radius: 10px;
+    background: #f8fafc;
+    scrollbar-width: thin;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-drop-zone.drag-over {
+    border-color: var(--accent);
+    background: #f0fdfa;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.feature-chip {
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 7px 11px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: white;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+}
+
+.feature-chip.selected {
+    border-color: #9bd6ce;
+    background: #d8f3ef;
+    color: #0f5f59;
+}
+
+.feature-chip:active {
+    cursor: grabbing;
+}
+
+.feature-chip.dragging {
+    opacity: 0.45;
+}
+
+.feature-drag-arrow {
+    align-self: center;
+    padding-top: 16px;
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 800;
 }
 
 #display-mode label {
@@ -156,5 +236,13 @@ h1 {
 
     .control-grid {
         grid-template-columns: 1fr;
+    }
+
+    .feature-drag-board {
+        flex-direction: column;
+    }
+
+    .feature-drag-arrow {
+        display: none;
     }
 }
