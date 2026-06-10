@@ -6,7 +6,7 @@ STUDENT HABITS DASHBOARD - HOW TO RUN
    python3 -m pip install -r requirements.txt
 
 3. Start the dashboard:
-   python3 src/app.py
+   python3 server.py
 
 4. Open the local URL printed in the terminal.
    It is usually http://127.0.0.1:8050/
