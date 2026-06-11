@@ -137,23 +137,7 @@ def create_layout() -> html.Main:
                 ],
                 className="chart-card",
             ),
-            html.Section(
-                [
-                    html.Div(
-                        [
-                            html.H2(id="beeswarm-title"),
-                            html.P(id="beeswarm-explanation"),
-                        ],
-                        className="explanation",
-                    ),
-                    dcc.Graph(
-                        id="beeswarm-chart",
-                        figure=BEESWARM_FIGURE,
-                        config={"displayModeBar": False, "responsive": True},
-                    ),
-                ],
-                className="chart-card",
-            ),
+
             html.Section(
                 [
                     html.Div(
@@ -215,6 +199,23 @@ def create_layout() -> html.Main:
                                 ],
                             ),
                         ],
+                    ),
+                ],
+                className="chart-card",
+            ),
+            html.Section(
+                [
+                    html.Div(
+                        [
+                            html.H2(id="beeswarm-title"),
+                            html.P(id="beeswarm-explanation"),
+                        ],
+                        className="explanation",
+                    ),
+                    dcc.Graph(
+                        id="beeswarm-chart",
+                        figure=BEESWARM_FIGURE,
+                        config={"displayModeBar": False, "responsive": True},
                     ),
                 ],
                 className="chart-card",

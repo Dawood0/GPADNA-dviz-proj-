@@ -14,7 +14,7 @@ TEMPLATE = "plotly_white"
 COLORS = {
     "Top Performers (Score above 80%)": "#0f9f6e",
     "Low Performers (Score below 40%)": "#dc2626",
-    "All Students": "#95a5a6",
+    "All Students": "#d97706",
 }
 
 HABIT_MAPPING = {
