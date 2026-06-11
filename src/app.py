@@ -184,7 +184,7 @@ def create_layout() -> html.Main:
                                 ],
                             ),
                             dcc.Tab(
-                                label="Other Study Habits",
+                                label="Other Habits",
                                 value="pairwise",
                                 children=[
                                     html.Div(
