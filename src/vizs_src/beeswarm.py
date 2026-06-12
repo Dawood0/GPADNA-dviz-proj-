@@ -5,6 +5,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+from pathlib import Path
+import pickle
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -34,6 +36,7 @@ MARKER_PADDING = 2
 SWARM_STEP = 0.55
 PLOT_WIDTH = 720
 PLOT_MARGIN = {"l": 56, "r": 16, "t": 18, "b": 72}
+CACHE_VERSION = 1
 
 
 @dataclass(frozen=True)
@@ -280,6 +283,7 @@ def _render_beeswarm_figure(
     target_col: str,
     student_id_col: str | None,
     display_mode: str,
+    cached_points: dict[str, tuple[pd.DataFrame, dict[str, object]]] | None = None,
 ) -> go.Figure:
     if categorized.empty or not feature_configs:
         return _empty_figure("Beeswarm chart needs a detected grade column and at least one selected feature.")
@@ -300,7 +304,17 @@ def _render_beeswarm_figure(
         row_number = index // cols + 1
         col_number = index % cols + 1
         feature_rows = categorized.loc[categorized[feature_config.key].notna()]
-        points, metadata = _create_beeswarm_points(feature_rows, feature_config, target_col, student_id_col, display_mode)
+        cached = (cached_points or {}).get(feature_config.key)
+        if cached is None:
+            points, metadata = _create_beeswarm_points(
+                feature_rows,
+                feature_config,
+                target_col,
+                student_id_col,
+                display_mode,
+            )
+        else:
+            points, metadata = cached
         if points.empty:
             continue
 
@@ -374,6 +388,77 @@ def _render_beeswarm_figure(
     return fig
 
 
+def _cache_file(cache_dir: Path, feature: str, low_threshold: float, high_threshold: float, display_mode: str) -> Path:
+    low = f"{low_threshold:g}".replace(".", "_")
+    high = f"{high_threshold:g}".replace(".", "_")
+    return cache_dir / f"{feature}__low-{low}__high-{high}__{display_mode}.pickle"
+
+
+def _load_cached_points(
+    cache_dir: Path | None,
+    features: list[str],
+    low_threshold: float,
+    high_threshold: float,
+    display_mode: str,
+) -> dict[str, tuple[pd.DataFrame, dict[str, object]]]:
+    if cache_dir is None:
+        return {}
+
+    cached: dict[str, tuple[pd.DataFrame, dict[str, object]]] = {}
+    for feature in features:
+        path = _cache_file(cache_dir, feature, low_threshold, high_threshold, display_mode)
+        try:
+            with path.open("rb") as file:
+                payload = pickle.load(file)
+            if payload.get("version") == CACHE_VERSION:
+                cached[feature] = (payload["points"], payload["metadata"])
+        except (FileNotFoundError, OSError, pickle.PickleError, EOFError, AttributeError, KeyError):
+            continue
+    return cached
+
+
+def preload_beeswarm_cache(
+    data: BeeswarmData,
+    cache_dir: Path,
+    low_threshold: float = 50,
+    high_threshold: float = 80,
+    display_modes: tuple[str, ...] = ("all", "high_low"),
+) -> int:
+    """Calculate and save reusable point positions for every beeswarm feature."""
+    if not data.target_col or data.target_col not in data.df.columns or high_threshold <= low_threshold:
+        raise ValueError("Beeswarm cache requires a detected grade column and valid thresholds.")
+
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    saved = 0
+    for display_mode in display_modes:
+        categorized = create_grade_categories(
+            data.df,
+            data.target_col,
+            high_threshold,
+            low_threshold,
+            display_mode,
+        )
+        for feature in data.features:
+            config = data.feature_configs_by_key[feature]
+            feature_rows = categorized.loc[categorized[feature].notna()]
+            points, metadata = _create_beeswarm_points(
+                feature_rows,
+                config,
+                data.target_col,
+                data.student_id_col,
+                display_mode,
+            )
+            path = _cache_file(cache_dir, feature, low_threshold, high_threshold, display_mode)
+            with path.open("wb") as file:
+                pickle.dump(
+                    {"version": CACHE_VERSION, "points": points, "metadata": metadata},
+                    file,
+                    protocol=pickle.HIGHEST_PROTOCOL,
+                )
+            saved += 1
+    return saved
+
+
 def prepare_beeswarm_data(
     df: pd.DataFrame,
     features: list[str],
@@ -421,6 +506,8 @@ def create_visual(data: BeeswarmData | pd.DataFrame, **kwargs) -> tuple[go.Figur
     high_threshold = float(kwargs.get("high_threshold", 80))
     low_threshold = float(kwargs.get("low_threshold", 50))
     display_mode = kwargs.get("display_mode", "all")
+    cache_dir_value = kwargs.get("cache_dir")
+    cache_dir = Path(cache_dir_value) if cache_dir_value else None
 
     if not target_col or target_col not in df.columns or high_threshold <= low_threshold:
         figure = _empty_figure("Beeswarm chart requires a detected grade column and valid thresholds.")
@@ -433,8 +520,16 @@ def create_visual(data: BeeswarmData | pd.DataFrame, **kwargs) -> tuple[go.Figur
         for feature in valid_features
         if feature in feature_configs_by_key
     ]
+    cached_points = _load_cached_points(cache_dir, valid_features, low_threshold, high_threshold, display_mode)
 
-    figure = _render_beeswarm_figure(categorized, feature_configs, target_col, student_id_col, display_mode)
+    figure = _render_beeswarm_figure(
+        categorized,
+        feature_configs,
+        target_col,
+        student_id_col,
+        display_mode,
+        cached_points,
+    )
     return figure, TITLE, EXPLANATION
 
 
@@ -832,8 +927,6 @@ def create_visual(data: BeeswarmData | pd.DataFrame, **kwargs) -> tuple[go.Figur
 #     feature_configs = _build_feature_configs(categorized, valid_features)
 #     figure = _render_beeswarm_figure(categorized, feature_configs, target_col, student_id_col, display_mode)
 #     return figure, TITLE, EXPLANATION
-
-
 
 
 

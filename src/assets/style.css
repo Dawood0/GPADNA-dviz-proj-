@@ -85,6 +85,10 @@ h1 {
     grid-column: 1 / -1;
 }
 
+.control-grid > .control:nth-child(2) {
+    grid-column: span 2;
+}
+
 .control label {
     display: block;
     margin-bottom: 8px;
@@ -105,6 +109,44 @@ h1 {
     width: auto;
     min-height: auto;
     margin-right: 5px;
+}
+
+.threshold-slider {
+    padding: 4px 10px 16px;
+}
+
+.threshold-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.threshold-slider .rc-slider-track {
+    background-color: var(--accent);
+}
+
+.threshold-slider .rc-slider-handle {
+    border-color: var(--accent);
+    background: white;
+}
+
+.threshold-slider .rc-slider-handle:hover,
+.threshold-slider .rc-slider-handle:active,
+.threshold-slider .rc-slider-handle:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
+}
+
+.threshold-slider .rc-slider-tooltip-inner {
+    background-color: var(--accent);
+    box-shadow: none;
+}
+
+.threshold-slider .rc-slider-tooltip-placement-bottom .rc-slider-tooltip-arrow {
+    border-bottom-color: var(--accent);
 }
 
 .feature-drag-board {
@@ -234,6 +276,10 @@ h1 {
 
     .control-grid {
         grid-template-columns: 1fr;
+    }
+
+    .control-grid > .control:nth-child(2) {
+        grid-column: auto;
     }
 
     .feature-drag-board {

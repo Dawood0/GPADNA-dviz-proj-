@@ -1,10 +1,12 @@
+from pathlib import Path
+
 from dash import Dash, Input, Output, dcc, html
 
 from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
 from vizs_src.heatmap import create_visual as create_heatmap
 from vizs_src.bar_chart import make_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
-from vizs_src.beeswarm import create_visual as create_beeswarm
+from vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
@@ -18,6 +20,13 @@ DEFAULT_FEATURES = FEATURES[:3]
 FEATURE_OPTIONS = [{"label": pretty_name(feature), "value": feature} for feature in FEATURES]
 DEFAULT_LOW = 50
 DEFAULT_HIGH = 80
+BEESWARM_CACHE_DIR = Path(__file__).resolve().parents[1] / "preloaded" / "beeswarm"
+BEESWARM_DATA = prepare_beeswarm_data(
+    DF,
+    features=FEATURES,
+    target_col=TARGET_COL,
+    student_id_col=DETECTED["student_id_col"],
+)
 
 HEATMAP_FIGURE_HEALTH, HEATMAP_TITLE, HEATMAP_EXPLANATION = create_heatmap(
     DF,
@@ -32,12 +41,13 @@ HEATMAP_FIGURE_PAIRWISE, _, _ = create_heatmap(
 BAR_CHART_FIGURE = make_bar_chart(DF)
 
 BEESWARM_FIGURE, BEESWARM_TITLE, BEESWARM_EXPLANATION = create_beeswarm(
-    DF,
+    BEESWARM_DATA,
     features=DEFAULT_FEATURES,
     target_col=TARGET_COL,
     high_threshold=DEFAULT_HIGH,
     low_threshold=DEFAULT_LOW,
     display_mode="all",
+    cache_dir=BEESWARM_CACHE_DIR,
 )
 
 app = Dash(__name__)
@@ -145,25 +155,29 @@ def create_layout() -> html.Main:
                                 make_feature_filter("features"),
                             ),
                             make_control(
-                                "Low grade threshold",
-                                dcc.Input(
-                                    id="low-threshold",
-                                    type="number",
-                                    value=DEFAULT_LOW,
-                                    min=0,
-                                    max=100,
-                                    debounce=True,
-                                ),
-                            ),
-                            make_control(
-                                "High grade threshold",
-                                dcc.Input(
-                                    id="high-threshold",
-                                    type="number",
-                                    value=DEFAULT_HIGH,
-                                    min=0,
-                                    max=100,
-                                    debounce=True,
+                                "Grade thresholds",
+                                html.Div(
+                                    [
+                                        html.Div(
+                                            [
+                                                html.Span("Low grade"),
+                                                html.Span("High grade"),
+                                            ],
+                                            className="threshold-labels",
+                                        ),
+                                        dcc.RangeSlider(
+                                            id="grade-thresholds",
+                                            value=[DEFAULT_LOW, DEFAULT_HIGH],
+                                            min=0,
+                                            max=100,
+                                            step=1,
+                                            marks={0: "0", 25: "25", 50: "50", 75: "75", 100: "100"},
+                                            tooltip={"placement": "bottom", "always_visible": True},
+                                            updatemode="mouseup",
+                                            allowCross=False,
+                                        ),
+                                    ],
+                                    className="threshold-slider",
                                 ),
                             ),
                             make_control(
@@ -314,14 +328,14 @@ app.layout = create_layout()
     Output("visual-explanation", "children"),
     Output("status", "children"),
     Input("features", "data"),
-    Input("low-threshold", "value"),
-    Input("high-threshold", "value"),
+    Input("grade-thresholds", "value"),
     Input("display-mode", "value"),
 )
-def update_radar(features, low_threshold, high_threshold, display_mode):
+def update_radar(features, grade_thresholds, display_mode):
     features = features or []
-    low_threshold = float(low_threshold if low_threshold is not None else DEFAULT_LOW)
-    high_threshold = float(high_threshold if high_threshold is not None else DEFAULT_HIGH)
+    low_threshold, high_threshold = grade_thresholds or [DEFAULT_LOW, DEFAULT_HIGH]
+    low_threshold = float(low_threshold)
+    high_threshold = float(high_threshold)
 
     status = ""
     if high_threshold <= low_threshold:
@@ -344,22 +358,23 @@ def update_radar(features, low_threshold, high_threshold, display_mode):
 @app.callback(
     Output("beeswarm-chart", "figure"),
     Input("beeswarm-features", "data"),
-    Input("low-threshold", "value"),
-    Input("high-threshold", "value"),
+    Input("grade-thresholds", "value"),
     Input("display-mode", "value"),
 )
-def update_beeswarm(beeswarm_features, low_threshold, high_threshold, display_mode):
+def update_beeswarm(beeswarm_features, grade_thresholds, display_mode):
     beeswarm_features = beeswarm_features or []
-    low_threshold = float(low_threshold if low_threshold is not None else DEFAULT_LOW)
-    high_threshold = float(high_threshold if high_threshold is not None else DEFAULT_HIGH)
+    low_threshold, high_threshold = grade_thresholds or [DEFAULT_LOW, DEFAULT_HIGH]
+    low_threshold = float(low_threshold)
+    high_threshold = float(high_threshold)
 
     figure, _, _ = create_beeswarm(
-        DF,
+        BEESWARM_DATA,
         features=beeswarm_features,
         target_col=TARGET_COL,
         high_threshold=high_threshold,
         low_threshold=low_threshold,
         display_mode=display_mode,
+        cache_dir=BEESWARM_CACHE_DIR,
     )
 
     return figure
@@ -689,5 +704,3 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     app.run(debug=False)
-
-

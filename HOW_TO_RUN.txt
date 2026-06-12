@@ -5,10 +5,15 @@ STUDENT HABITS DASHBOARD - HOW TO RUN
 2. Install dependencies:
    python3 -m pip install -r requirements.txt
 
-3. Start the dashboard:
+3. Preload the beeswarm plots (run once, and again after changing the data):
+   python3 src/preload_beeswarm.py
+   This caches every feature for the default 50/80 thresholds and both group modes.
+   Other threshold values still work, but they are calculated live.
+
+4. Start the dashboard:
    python3 server.py
 
-4. Open the local URL printed in the terminal.
+5. Open the local URL printed in the terminal.
    It is usually http://127.0.0.1:8050/
 
 Stop the dashboard with Ctrl+C.
