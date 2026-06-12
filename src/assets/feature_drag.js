@@ -1,12 +1,12 @@
 (() => {
     let draggedChip = null;
 
-    function updateSelectedFeatures() {
-        const selected = [...document.querySelectorAll("#selected-features .feature-chip")]
+    function updateSelectedFeatures(board) {
+        const selected = [...board.querySelectorAll('[data-zone="selected"] .feature-chip')]
             .map((chip) => chip.dataset.feature);
 
         if (window.dash_clientside?.set_props) {
-            window.dash_clientside.set_props("features", {data: selected});
+            window.dash_clientside.set_props(board.dataset.storeId, {data: selected});
         }
     }
 
@@ -53,7 +53,7 @@
 
         event.preventDefault();
         positionChip(zone, draggedChip.nextElementSibling);
-        updateSelectedFeatures();
+        updateSelectedFeatures(zone.closest(".feature-drag-board"));
         zone.classList.remove("drag-over");
     });
 })();

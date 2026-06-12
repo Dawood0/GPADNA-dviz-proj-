@@ -48,6 +48,54 @@ def make_control(label: str, component) -> html.Div:
     return html.Div([html.Label(label), component], className="control")
 
 
+def make_feature_filter(store_id: str) -> html.Div:
+    selected = set(DEFAULT_FEATURES)
+
+    def make_chip(feature: str, is_selected: bool) -> html.Div:
+        return html.Div(
+            pretty_name(feature),
+            className=f"feature-chip{' selected' if is_selected else ''}",
+            draggable="true",
+            **{"data-feature": feature},
+        )
+
+    return html.Div(
+        [
+            dcc.Store(id=store_id, data=DEFAULT_FEATURES),
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.Span("Available", className="feature-zone-label"),
+                            html.Div(
+                                [make_chip(feature, False) for feature in FEATURES if feature not in selected],
+                                className="feature-drop-zone",
+                                **{"data-zone": "available"},
+                            ),
+                        ],
+                        className="feature-zone",
+                    ),
+                    html.Div("→", className="feature-drag-arrow"),
+                    html.Div(
+                        [
+                            html.Span("Selected", className="feature-zone-label"),
+                            html.Div(
+                                [make_chip(feature, True) for feature in DEFAULT_FEATURES],
+                                className="feature-drop-zone",
+                                **{"data-zone": "selected"},
+                            ),
+                        ],
+                        className="feature-zone",
+                    ),
+                ],
+                className="feature-drag-board",
+                **{"data-store-id": store_id},
+            ),
+        ],
+        className="feature-filter",
+    )
+
+
 def create_layout() -> html.Main:
     return html.Main(
         [
@@ -93,13 +141,8 @@ def create_layout() -> html.Main:
                     html.Div(
                         [
                             make_control(
-                                "Radar features",
-                                dcc.Dropdown(
-                                    id="features",
-                                    options=FEATURE_OPTIONS,
-                                    value=DEFAULT_FEATURES,
-                                    multi=True,
-                                ),
+                                "Main features",
+                                make_feature_filter("features"),
                             ),
                             make_control(
                                 "Low grade threshold",
@@ -188,12 +231,7 @@ def create_layout() -> html.Main:
                         [
                             make_control(
                                 "Beeswarm features",
-                                dcc.Dropdown(
-                                    id="beeswarm-features",
-                                    options=FEATURE_OPTIONS,
-                                    value=DEFAULT_FEATURES,
-                                    multi=True,
-                                ),
+                                make_feature_filter("beeswarm-features"),
                             ),
                         ],
                         className="control-grid",
@@ -275,7 +313,7 @@ app.layout = create_layout()
     Output("visual-title", "children"),
     Output("visual-explanation", "children"),
     Output("status", "children"),
-    Input("features", "value"),
+    Input("features", "data"),
     Input("low-threshold", "value"),
     Input("high-threshold", "value"),
     Input("display-mode", "value"),
@@ -305,7 +343,7 @@ def update_radar(features, low_threshold, high_threshold, display_mode):
 
 @app.callback(
     Output("beeswarm-chart", "figure"),
-    Input("beeswarm-features", "value"),
+    Input("beeswarm-features", "data"),
     Input("low-threshold", "value"),
     Input("high-threshold", "value"),
     Input("display-mode", "value"),
@@ -651,6 +689,5 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     app.run(debug=False)
-
 
 

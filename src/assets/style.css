@@ -109,8 +109,8 @@ h1 {
 
 .feature-drag-board {
     display: flex;
-    align-items: stretch;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
 }
 
 .feature-zone {
@@ -130,12 +130,13 @@ h1 {
 
 .feature-drop-zone {
     display: flex;
-    min-height: 52px;
-    padding: 7px;
-    gap: 7px;
+    align-items: center;
+    min-height: 48px;
+    padding: 6px;
+    gap: 6px;
     overflow-x: auto;
-    border: 1px dashed #aebdcc;
-    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     background: #f8fafc;
     scrollbar-width: thin;
     transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -149,14 +150,13 @@ h1 {
 
 .feature-chip {
     flex: 0 0 auto;
-    align-self: center;
-    padding: 7px 11px;
+    padding: 6px 10px;
     border: 1px solid var(--border);
-    border-radius: 999px;
+    border-radius: 6px;
     background: white;
     color: var(--ink);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: grab;
     user-select: none;
 }
@@ -176,11 +176,9 @@ h1 {
 }
 
 .feature-drag-arrow {
-    align-self: center;
-    padding-top: 16px;
     color: var(--accent);
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 #display-mode label {
