@@ -8,7 +8,7 @@ STUDENT HABITS DASHBOARD - HOW TO RUN
 3. Preload the beeswarm plots (run once, and again after changing the data):
    python3 src/preload_beeswarm.py
    This caches every feature for the default 50/80 thresholds and both group modes.
-   Other threshold values still work, but they are calculated live.
+   Other threshold values still work, but they are calculated live..
 
 4. Start the dashboard:
    python3 server.py
