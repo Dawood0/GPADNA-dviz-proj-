@@ -1,116 +1,105 @@
-"""Bar chart visualization comparing habits by performance group."""
+"""Bar chart visualization comparing habits by grade category."""
 
 from __future__ import annotations
 
 import pandas as pd
 import plotly.graph_objects as go
 
-TITLE = "Average Habits by Performance Group"
+from preprocessing import detect_columns, prepare_radar_data
+
+
+TITLE = "Average Normalized Habit Values by Grade Category"
 EXPLANATION = (
-    "Compares average habit values across top performers (score >= 80%), "
-    "low performers (score <= 40%), and all students."
+    "Compares average normalized habit values for high, average, and low grade "
+    "students. Bars show how habits differ across performance groups."
 )
-TEMPLATE = "plotly_white"
 COLORS = {
-    "Top Performers (Score above 80%)": "#0f9f6e",
-    "Low Performers (Score below 40%)": "#dc2626",
-    "All Students": "#d97706",
+    "High grade": "#0f9f6e",
+    "Medium/Average grade": "#d97706",
+    "Low grade": "#dc2626",
 }
-
-HABIT_MAPPING = {
-    "study_hours_per_day": "Study Hours/Day",
-    "sleep_hours": "Sleep Hours",
-    "social_media_hours": "Social Media Hours",
-    "netflix_hours": "Netflix Hours",
-    "exercise_frequency": "Exercise Frequency",
-    "mental_health_rating": "Mental Health Rating",
-    "diet_quality_num": "Diet Quality (1=Poor, 3=Good)",
-    "part_time_job_num": "Part-Time Job (0=No, 1=Yes)",
-    "extracurricular_num": "Extracurricular (0=No, 1=Yes)",
-    "internet_quality_num": "Internet Quality (1=Poor, 3=Good)",
-}
+TEMPLATE = "plotly_white"
 
 
-def _prepare_categorical_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert categorical columns to numeric values."""
-    df_copy = df.copy()
-    df_copy["diet_quality_num"] = df_copy["diet_quality"].map({"Poor": 1, "Fair": 2, "Good": 3})
-    df_copy["part_time_job_num"] = df_copy["part_time_job"].map({"No": 0, "Yes": 1})
-    df_copy["extracurricular_num"] = df_copy["extracurricular_participation"].map({"No": 0, "Yes": 1})
-    df_copy["internet_quality_num"] = df_copy["internet_quality"].map({"Poor": 1, "Fair": 2, "Good": 3})
-    df_copy["parental_education_num"] = df_copy["parental_education_level"].map({
-        "None": 0, "High School": 1, "Bachelor": 2, "Master": 3, "PhD": 4
-    })
-    df_copy["gender_num"] = df_copy["gender"].map({"Male": 0, "Female": 1, "Other": 2})
-    return df_copy
-
-
-def _extract_habit_keys_and_labels() -> tuple[list[str], list[str]]:
-    """Extract habit column names and their display labels."""
-    habit_keys = list(HABIT_MAPPING.keys())
-    habit_labels = list(HABIT_MAPPING.values())
-    return habit_keys, habit_labels
-
-
-def make_bar_chart(df: pd.DataFrame) -> go.Figure:
-    """Create bar chart comparing habit averages by performance group.
-    
-    Args:
-        df: DataFrame containing student habits and exam scores.
-        
-    Returns:
-        A Plotly Figure object displaying the bar chart.
-    """
-    df = _prepare_categorical_data(df)
-    habit_keys, habit_labels = _extract_habit_keys_and_labels()
-    
-    # Filter by performance groups
-    top = df[df["exam_score"] >= df["exam_score"].quantile(0.80)]
-    low = df[df["exam_score"] <= df["exam_score"].quantile(0.40)]
-    
-    # Calculate averages
-    top_avg = top[habit_keys].mean()
-    low_avg = low[habit_keys].mean()
-    all_avg = df[habit_keys].mean()
-    
-    # Build chart
+def _empty_figure(message: str) -> go.Figure:
     fig = go.Figure()
-    
-    fig.add_trace(go.Bar(
-        name="Top Performers (Score above 80%)",
-        x=habit_labels,
-        y=top_avg,
-        marker_color=COLORS["Top Performers (Score above 80%)"],
-        hovertemplate="<b>%{x}</b><br>Top avg: %{y:.2f}<extra></extra>",
-    ))
-    
-    fig.add_trace(go.Bar(
-        name="Low Performers (Score below 40%)",
-        x=habit_labels,
-        y=low_avg,
-        marker_color=COLORS["Low Performers (Score below 40%)"],
-        hovertemplate="<b>%{x}</b><br>Low avg: %{y:.2f}<extra></extra>",
-    ))
-    
-    fig.add_trace(go.Bar(
-        name="All Students",
-        x=habit_labels,
-        y=all_avg,
-        marker_color=COLORS["All Students"],
-        hovertemplate="<b>%{x}</b><br>Overall avg: %{y:.2f}<extra></extra>",
-    ))
-    
+    fig.add_annotation(text=message, x=0.5, y=0.5, showarrow=False, font={"size": 16, "color": "#64748b"})
     fig.update_layout(
-        title=TITLE,
         template=TEMPLATE,
-        xaxis_title="Habit",
-        yaxis_title="Average Value",
-        barmode="group",
+        height=520,
+        margin={"l": 30, "r": 30, "t": 50, "b": 30},
+        xaxis={"visible": False},
+        yaxis={"visible": False},
+    )
+    return fig
+
+
+def _create_bar_chart(
+    bar_data: pd.DataFrame,
+    high_threshold: float,
+    low_threshold: float,
+    display_mode: str,
+) -> go.Figure:
+    if bar_data.empty:
+        return _empty_figure("Bar chart needs a detected grade column and at least one selected feature.")
+
+    fig = go.Figure()
+    feature_labels = bar_data["feature_label"].drop_duplicates().tolist()
+    
+    # Add traces for each grade category
+    for category in ["Low grade", "Medium/Average grade", "High grade"]:
+        group = bar_data.loc[bar_data["grade_category"].eq(category)]
+        if group.empty:
+            continue
+        
+        group = group.set_index("feature_label").reindex(feature_labels).reset_index()
+        values = group["normalized_average"].fillna(0).tolist()
+        
+        fig.add_trace(
+            go.Bar(
+                name=category,
+                x=feature_labels,
+                y=values,
+                marker={"color": COLORS[category]},
+                hovertemplate="<b>%{x}</b><br>Normalized avg: %{y:.2f}<extra></extra>",
+            )
+        )
+
+    fig.update_layout(
+        template=TEMPLATE,
         height=520,
         margin={"l": 30, "r": 30, "t": 50, "b": 150},
         xaxis={"showgrid": False, "tickangle": -30},
         yaxis={"showgrid": True, "gridcolor": "lightgrey"},
+        barmode="group",
         legend={"orientation": "v", "x": 1.01, "y": 1},
+        font={"family": "Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"},
     )
-    
     return fig
+
+
+def create_visual(df: pd.DataFrame, **kwargs) -> tuple[go.Figure, str, str]:
+    """Return the bar chart figure, title, and explanation for the supplied data."""
+    detected = detect_columns(df)
+    features = kwargs.get("features", detected["features"])
+    target_col = kwargs.get("target_col", detected["target_col"])
+    high_threshold = float(kwargs.get("high_threshold", 80))
+    low_threshold = float(kwargs.get("low_threshold", 50))
+    display_mode = kwargs.get("display_mode", "all")
+
+    bar_data = prepare_radar_data(
+        df,
+        features,
+        target_col,
+        high_threshold,
+        low_threshold,
+        display_mode,
+    )
+    figure = _create_bar_chart(bar_data, high_threshold, low_threshold, display_mode)
+    return figure, TITLE, EXPLANATION
+
+
+def make_bar_chart(df: pd.DataFrame, **kwargs) -> go.Figure:
+    """Legacy function for backward compatibility. Use create_visual() instead."""
+    figure, _, _ = create_visual(df, **kwargs)
+    return figure
