@@ -5,7 +5,7 @@ from dash import Dash, Input, Output, dcc, html
 from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
 from vizs_src.heatmap import create_visual as create_heatmap
-from vizs_src.bar_chart import make_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
+from vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
 from vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
 
 # Add teammate visuals with direct imports, for example:
@@ -38,7 +38,6 @@ HEATMAP_FIGURE_PAIRWISE, _, _ = create_heatmap(
     target_col=TARGET_COL,
     mode="pairwise",
 )
-BAR_CHART_FIGURE = make_bar_chart(DF)
 
 BEESWARM_FIGURE, BEESWARM_TITLE, BEESWARM_EXPLANATION = create_beeswarm(
     BEESWARM_DATA,
@@ -209,7 +208,6 @@ def create_layout() -> html.Main:
                     ),
                     dcc.Graph(
                         id="bar-chart",
-                        figure=BAR_CHART_FIGURE,
                         config={"displayModeBar": False, "responsive": True},
                     ),
                 ],
@@ -353,6 +351,30 @@ def update_radar(features, grade_thresholds, display_mode):
     )
 
     return figure, title, explanation, status
+
+
+@app.callback(
+    Output("bar-chart", "figure"),
+    Input("features", "data"),
+    Input("grade-thresholds", "value"),
+    Input("display-mode", "value"),
+)
+def update_bar_chart(features, grade_thresholds, display_mode):
+    features = features or []
+    low_threshold, high_threshold = grade_thresholds or [DEFAULT_LOW, DEFAULT_HIGH]
+    low_threshold = float(low_threshold)
+    high_threshold = float(high_threshold)
+
+    figure, _, _ = create_bar_chart(
+        DF,
+        features=features,
+        target_col=TARGET_COL,
+        high_threshold=high_threshold,
+        low_threshold=low_threshold,
+        display_mode=display_mode,
+    )
+
+    return figure
 
 
 @app.callback(
