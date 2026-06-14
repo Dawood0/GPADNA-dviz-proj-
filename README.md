@@ -5,7 +5,7 @@ categories. The project separates data preparation, visualizations, and the app
 shell so additional teammate visualizations can be added without changing the
 existing radar visual.
 
-## Run
+## Run locally
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -13,6 +13,10 @@ python3 server.py
 ```
 
 Open the local URL printed by Dash, usually `http://127.0.0.1:8050/`.
+
+## Live demo
+Open [https://gpadna-dviz-proj.onrender.com/](https://gpadna-dviz-proj.onrender.com/)
+
 
 ## Structure
 
