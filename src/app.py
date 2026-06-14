@@ -121,8 +121,8 @@ def create_layout() -> html.Main:
                             html.Br(),
                             html.Br(),
                             f"""
-                        Using data from {len(DF):,} students, this interactive experience helps you uncover patterns,
-                        challenge assumptions, and discover which habits are commonly associated with different levels
+                        Using data from {len(DF):,} students, this interactive application helps you 
+                        discover which habits are commonly associated with different levels
                         of academic performance. Adjust the grade thresholds, select the factors that interest you most,
                         and investigate the relationships that matter to you.
                         """,
@@ -177,6 +177,9 @@ def create_layout() -> html.Main:
                                         ),
                                     ],
                                     className="threshold-slider",
+                                    style={
+                                        "marginRight": "50px"
+                                    }
                                 ),
                             ),
                             make_control(
