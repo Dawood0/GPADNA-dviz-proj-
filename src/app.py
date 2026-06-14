@@ -50,6 +50,7 @@ BEESWARM_FIGURE, BEESWARM_TITLE, BEESWARM_EXPLANATION = create_beeswarm(
 )
 
 app = Dash(__name__)
+server = app.server
 app.title = "GPADNA"
 
 
