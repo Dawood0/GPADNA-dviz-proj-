@@ -207,6 +207,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(CHART_TITLE),
                             html.P(CHART_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -223,6 +225,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(id="visual-title"),
                             html.P(id="visual-explanation"),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -240,6 +244,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(BEESWARM_TITLE),
                             html.P(BEESWARM_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -266,6 +272,7 @@ def create_layout() -> html.Main:
                         [
                             html.H2(HEATMAP_TITLE),
                             html.P(HEATMAP_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
                         ],
                         className="explanation",
                     ),
