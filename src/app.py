@@ -3,10 +3,10 @@ from pathlib import Path
 from dash import Dash, Input, Output, dcc, html
 
 from src.preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
-from vizs_src.radar import create_visual as create_radar
-from vizs_src.heatmap import create_visual as create_heatmap
-from vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
-from vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
+from src.vizs_src.radar import create_visual as create_radar
+from src.vizs_src.heatmap import create_visual as create_heatmap
+from src.vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
+from src.vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
