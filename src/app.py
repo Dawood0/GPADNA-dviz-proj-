@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dash import Dash, Input, Output, dcc, html
 
-from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
+from src.preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
 from vizs_src.radar import create_visual as create_radar
 from vizs_src.heatmap import create_visual as create_heatmap
 from vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
@@ -404,8 +404,4 @@ def update_beeswarm(beeswarm_features, grade_thresholds, display_mode):
     )
 
     return figure
-
-
-if __name__ == "__main__":
-    app.run(debug=False)
 

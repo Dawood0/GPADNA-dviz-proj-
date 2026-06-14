@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 from itertools import combinations
 from plotly.subplots import make_subplots
 
-from preprocessing import detect_columns
+from src.preprocessing import detect_columns
 
 AXIS_OPTIONS = [
     {"label": "Exercise Frequency", "value": "exercise_frequency"},
