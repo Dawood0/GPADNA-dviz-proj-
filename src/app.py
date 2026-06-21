@@ -2,11 +2,11 @@ from pathlib import Path
 
 from dash import Dash, Input, Output, dcc, html
 
-from preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
-from vizs_src.radar import create_visual as create_radar
-from vizs_src.heatmap import create_visual as create_heatmap
-from vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
-from vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
+from src.preprocessing import DATA_FILE, detect_columns, load_data, pretty_name
+from src.vizs_src.radar import create_visual as create_radar
+from src.vizs_src.heatmap import create_visual as create_heatmap
+from src.vizs_src.bar_chart import create_visual as create_bar_chart, TITLE as CHART_TITLE, EXPLANATION as CHART_EXPLANATION
+from src.vizs_src.beeswarm import create_visual as create_beeswarm, prepare_beeswarm_data
 
 # Add teammate visuals with direct imports, for example:
 # from vizs_src.scatter_plot import create_visual as create_scatter_plot
@@ -50,6 +50,7 @@ BEESWARM_FIGURE, BEESWARM_TITLE, BEESWARM_EXPLANATION = create_beeswarm(
 )
 
 app = Dash(__name__)
+server = app.server
 app.title = "GPADNA"
 
 
@@ -121,8 +122,8 @@ def create_layout() -> html.Main:
                             html.Br(),
                             html.Br(),
                             f"""
-                        Using data from {len(DF):,} students, this interactive experience helps you uncover patterns,
-                        challenge assumptions, and discover which habits are commonly associated with different levels
+                        Using data from {len(DF):,} students, this interactive application helps you 
+                        discover which habits are commonly associated with different levels
                         of academic performance. Adjust the grade thresholds, select the factors that interest you most,
                         and investigate the relationships that matter to you.
                         """,
@@ -177,6 +178,9 @@ def create_layout() -> html.Main:
                                         ),
                                     ],
                                     className="threshold-slider",
+                                    style={
+                                        "marginRight": "50px"
+                                    }
                                 ),
                             ),
                             make_control(
@@ -203,6 +207,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(CHART_TITLE),
                             html.P(CHART_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -219,6 +225,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(id="visual-title"),
                             html.P(id="visual-explanation"),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -236,6 +244,8 @@ def create_layout() -> html.Main:
                         [
                             html.H2(BEESWARM_TITLE),
                             html.P(BEESWARM_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
+
                         ],
                         className="explanation",
                     ),
@@ -262,6 +272,7 @@ def create_layout() -> html.Main:
                         [
                             html.H2(HEATMAP_TITLE),
                             html.P(HEATMAP_EXPLANATION),
+                            html.P("Tip: click legend items to show or hide groups."),
                         ],
                         className="explanation",
                     ),
@@ -400,8 +411,4 @@ def update_beeswarm(beeswarm_features, grade_thresholds, display_mode):
     )
 
     return figure
-
-
-if __name__ == "__main__":
-    app.run(debug=False)
 

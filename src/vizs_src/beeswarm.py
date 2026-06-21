@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from preprocessing import (
+from src.preprocessing import (
     ORDINAL_CATEGORY_MAPS,
     create_grade_categories,
     detect_columns,

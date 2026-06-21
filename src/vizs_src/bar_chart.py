@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from preprocessing import detect_columns, prepare_radar_data
+from src.preprocessing import detect_columns, prepare_radar_data
 
 
 TITLE = "Average Normalized Habit Values by Grade Category"
@@ -34,6 +34,17 @@ def _empty_figure(message: str) -> go.Figure:
     return fig
 
 
+def _threshold_labels(high_threshold: float, low_threshold: float, display_mode: str) -> dict[str, str]:
+    labels = {
+        "Low grade": f"Low grade: score <= {low_threshold:g}",
+        "Medium/Average grade": f"Medium grade: {low_threshold:g} < score < {high_threshold:g}",
+        "High grade": f"High grade: score >= {high_threshold:g}",
+    }
+    if display_mode == "high_low":
+        labels.pop("Medium/Average grade", None)
+    return labels
+
+
 def _create_bar_chart(
     bar_data: pd.DataFrame,
     high_threshold: float,
@@ -44,8 +55,10 @@ def _create_bar_chart(
         return _empty_figure("Bar chart needs a detected grade column and at least one selected feature.")
 
     fig = go.Figure()
+    labels = _threshold_labels(high_threshold, low_threshold, display_mode)
     feature_labels = bar_data["feature_label"].drop_duplicates().tolist()
     
+    # Add traces for each grade category
     for category in ["Low grade", "Medium/Average grade", "High grade"]:
         group = bar_data.loc[bar_data["grade_category"].eq(category)]
         if group.empty:
@@ -56,7 +69,7 @@ def _create_bar_chart(
         
         fig.add_trace(
             go.Bar(
-                name=category,
+                name=labels[category],
                 x=feature_labels,
                 y=values,
                 marker={"color": COLORS[category]},

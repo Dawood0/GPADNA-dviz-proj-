@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from preprocessing import detect_columns, prepare_radar_data
+from src.preprocessing import detect_columns, prepare_radar_data
 
 
 TITLE = "Average Normalized Habit Values by Grade Category"
