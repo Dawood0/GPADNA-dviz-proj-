@@ -15,7 +15,7 @@ python3 server.py
 Open the local URL printed by Dash, usually `http://127.0.0.1:8050/`.
 
 ## Live demo
-Open [https://gpadna-dviz-proj.onrender.com/](https://gpadna-dviz-proj.onrender.com/)
+Open [https://dawoodooooo.pythonanywhere.com/](https://gpadna-dviz-proj.onrender.com/)
 
 
 ## Structure
