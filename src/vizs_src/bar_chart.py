@@ -46,7 +46,6 @@ def _create_bar_chart(
     fig = go.Figure()
     feature_labels = bar_data["feature_label"].drop_duplicates().tolist()
     
-    # Add traces for each grade category
     for category in ["Low grade", "Medium/Average grade", "High grade"]:
         group = bar_data.loc[bar_data["grade_category"].eq(category)]
         if group.empty:
@@ -79,7 +78,6 @@ def _create_bar_chart(
 
 
 def create_visual(df: pd.DataFrame, **kwargs) -> tuple[go.Figure, str, str]:
-    """Return the bar chart figure, title, and explanation for the supplied data."""
     detected = detect_columns(df)
     features = kwargs.get("features", detected["features"])
     target_col = kwargs.get("target_col", detected["target_col"])
@@ -100,6 +98,5 @@ def create_visual(df: pd.DataFrame, **kwargs) -> tuple[go.Figure, str, str]:
 
 
 def make_bar_chart(df: pd.DataFrame, **kwargs) -> go.Figure:
-    """Legacy function for backward compatibility. Use create_visual() instead."""
     figure, _, _ = create_visual(df, **kwargs)
     return figure

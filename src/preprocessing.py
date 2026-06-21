@@ -53,7 +53,6 @@ NOMINAL_FEATURES = {"gender"}
 
 
 def clean_column_name(name: str) -> str:
-    """Convert dataset columns to stable snake_case names."""
     return re.sub(r"_+", "_", re.sub(r"[^0-9a-zA-Z]+", "_", str(name).strip().lower())).strip("_")
 
 
@@ -117,7 +116,6 @@ def detect_columns(df: pd.DataFrame) -> dict[str, object]:
 
 
 def classify_features_positive_negative(features: list[str]) -> dict[str, list[str]]:
-    """Classify features using explicit habit semantics and keyword inference."""
     positive: list[str] = []
     negative: list[str] = []
     positive_exact = {
@@ -160,7 +158,6 @@ def classify_features_by_grade_pattern(
     high_threshold: float,
     low_threshold: float,
 ) -> dict[str, list[str]]:
-    """Classify features by whether the green or red radar average is higher."""
     categorized = create_grade_categories(df, target_col, high_threshold, low_threshold, "all")
     if not target_col or target_col not in categorized.columns or high_threshold <= low_threshold:
         return {"all": features, "positive": [], "negative": []}
@@ -218,7 +215,6 @@ def create_grade_categories(
     low_threshold: float,
     display_mode: str = "all",
 ) -> pd.DataFrame:
-    """Create threshold-based High/Medium/Low grade categories."""
     out = df.copy()
     if not target_col or target_col not in out.columns or high_threshold <= low_threshold:
         out["grade_category"] = pd.Series(["Unavailable"] * len(out), index=out.index, dtype="string")
@@ -237,7 +233,6 @@ def create_grade_categories(
 
 
 def normalize_features(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
-    """Min-max normalize numeric features and deterministic category codes."""
     normalized = pd.DataFrame(index=df.index)
     for feature in features:
         values = _feature_numeric_values(df[feature], feature)
@@ -359,7 +354,6 @@ def prepare_dot_matrix_data(
     display_mode: str,
     max_students: int | None = None,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
-    """Build a long table with deterministic sorted dot positions for small multiples."""
     categorized = create_grade_categories(df, target_col, high_threshold, low_threshold, display_mode)
     metadata = {"sampled": False, "total_students": len(categorized), "shown_students": len(categorized), "counts": {}}
     if not target_col or target_col not in categorized.columns or high_threshold <= low_threshold:

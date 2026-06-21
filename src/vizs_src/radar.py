@@ -104,7 +104,6 @@ def _create_radar_chart(
 
 
 def create_visual(df: pd.DataFrame, **kwargs) -> tuple[go.Figure, str, str]:
-    """Return the radar figure, title, and explanation for the supplied data."""
     detected = detect_columns(df)
     features = kwargs.get("features", detected["features"])
     target_col = kwargs.get("target_col", detected["target_col"])
